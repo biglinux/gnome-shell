@@ -51,3 +51,9 @@ option('systemd',
   value: true,
   description: 'Enable systemd integration'
 )
+
+option('use_jemalloc',
+  type: 'boolean',
+  value: true,
+  description: 'Use jemalloc allocator'
+)

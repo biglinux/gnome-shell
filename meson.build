@@ -10,7 +10,7 @@ split_version = meson.project_version().split('.')
 # the Cogl and Clutter libraries also use this API version.
 # The API version is increased each development cycle,
 # starting with 0 in 3.23.x
-mutter_api_version = '16'
+mutter_api_version = '14'
 
 clutter_pc = 'mutter-clutter-' + mutter_api_version
 cogl_pc = 'mutter-cogl-' + mutter_api_version
@@ -25,9 +25,9 @@ gio_req = '>= 2.79.2'
 gi_req = '>= 1.49.1'
 gjs_req = '>= 1.73.1'
 gtk_req = '>= 4.0'
-mutter_req = '>= 49.alpha'
+mutter_req = '>= 46.2'
 polkit_req = '>= 0.100'
-schemas_req = '>= 48.beta'
+schemas_req = '>= 46.1'
 systemd_req = '>= 246'
 gnome_desktop_req = '>= 40'
 pipewire_req = '>= 0.3.49'
@@ -88,9 +88,9 @@ schemas_dep = dependency('gsettings-desktop-schemas', version: schemas_req)
 gnome_desktop_dep = dependency('gnome-desktop-4', version: gnome_desktop_req)
 pango_dep = dependency('pango', version: pango_req)
 
-have_fonts = mutter_dep.get_variable('have_fonts') == 'true'
-have_x11 = mutter_dep.get_variable('have_x11') == 'true'
-have_x11_client = mutter_dep.get_variable('have_x11_client') == 'true'
+have_fonts = mutter_dep.get_variable('have_fonts', default_value: 'true') == 'true'
+have_x11 = mutter_dep.get_variable('have_x11', default_value: 'true') == 'true'
+have_x11_client = mutter_dep.get_variable('have_x11_client', default_value: 'true') == 'true'
 if have_x11_client or have_x11
   x11_dep = dependency('x11')
 endif
@@ -147,6 +147,8 @@ generate_app_list = find_program('build-aux/generate-app-list.py')
 cc = meson.get_compiler('c')
 
 m_dep = cc.find_library('m', required: false)
+
+common_deps = []
 
 cdata = configuration_data()
 cdata.set_quoted('GETTEXT_PACKAGE', meson.project_name())
@@ -238,6 +240,12 @@ if buildtype != 'plain'
 
   supported_gs_c_args = cc.get_supported_arguments(gs_c_args)
   add_project_arguments(supported_gs_c_args, language: 'c')
+endif
+
+use_jemalloc = get_option('use_jemalloc')
+if use_jemalloc
+  jemalloc_dep = dependency('jemalloc', required: true)
+  common_deps += jemalloc_dep
 endif
 
 config_h = configure_file(

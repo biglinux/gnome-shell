@@ -281,7 +281,7 @@ libshell_gir = gnome.generate_gir(libshell,
 
 executable('gnome-shell', 'main.c',
   c_args: gnome_shell_cflags + typelib_cflags,
-  dependencies: gnome_shell_deps + [libshell_dep, libst_dep, mutter_dep],
+  dependencies: gnome_shell_deps + [libshell_dep, libst_dep, mutter_dep] + common_deps,
   include_directories: [conf_inc],
   build_rpath: mutter_typelibdir,
   install_rpath: install_rpath,
